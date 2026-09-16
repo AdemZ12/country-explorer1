@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Country Explorer 🌍</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f5;
+      color: #17221b;
+      padding-bottom: 85px;
+    }
+
+    .app {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    header {
+      padding: 25px 20px 10px;
+    }
+
+    header h1 {
+      font-size: 32px;
+    }
+
+    header p {
+      color: #68736c;
+      margin-top: 6px;
+    }
+
+    section {
+      padding: 15px 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #dfe6e1;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .hero {
+      grid-column: 1 / -1;
+    }
+
+    .map {
+      height: 220px;
+      border-radius: 18px;
+      background: #dcefe4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #68736c;
+      line-height: 1.5;
+    }
+
+    .search {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid #dfe6e1;
+      border-radius: 13px;
+      font-size: 16px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .main-button {
+      background: #197447;
+      color: white;
+      border: none;
+      padding: 13px 17px;
+      border-radius: 13px;
+      font-weight: bold;
+    }
+
+    .flag {
+      font-size: 60px;
+      margin-bottom: 8px;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .fact {
+      background: #f6f8f6;
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .fact b {
+      display: block;
+      color: #68736c;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .pill {
+      display: inline-block;
+      background: #e4f3ea;
+      color: #197447;
+      padding: 8px 11px;
+      border-radius: 20px;
+      margin: 4px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .game {
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .game:hover {
+      transform: translateY(-3px);
+    }
+
+    .game-icon {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .score {
+      color: #197447;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .question {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .answers {
+      display: grid;
+      gap: 10px;
+    }
+
+    .answer {
+      padding: 15px;
+      background: white;
+      border: 1px solid #dfe6e1;
+      border-radius: 13px;
+      text-align: left;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .answer:hover {
+      border-color: #197447;
+    }
+
+    .feedback {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Bottom navigation */
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #dfe6e1;
+      z-index: 100;
+    }
+
+    .nav-inner {
+      max-width: 900px;
+      margin: auto;
+      display: flex;
+    }
+
+    .nav-button {
+      flex: 1;
+      background: white;
+      border: none;
+      padding: 10px;
+      color: #68736c;
+      font-size: 12px;
+    }
+
+    .nav-button span {
+      display: block;
+      font-size: 23px;
+      margin-bottom: 3px;
+    }
+
+    .nav-button.active {
+      color: #197447;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        grid-column: auto;
+      }
+
+      .facts {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+    <h1>🌍 Country Explorer</h1>
+    <p>
+      Explore countries, play geography games,
+      and discover something new every day.
+    </p>
+  </header>
+
+
+  <!-- ================= HOME ================= -->
+
+  <section id="home">
+
+    <div class="grid">
+
+      <div class="card hero">
+
+        <div class="map">
+          🌎
+        </div>
+
+        <h2>Explore the World</h2>
+
+        <div class="search">
+
+          <input
+            id="search"
+            placeholder="Search a country..."
+            oninput="searchCountry()"
+          >
+
+          <button
+            class="main-button"
+            onclick="randomCountry()"
+          >
+            🎲 Random
+          </button>
+
+        </div>
+
+        <div id="searchResult"></div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h2>🌟 Country of the Day</h2>
+
+        <div id="dailyCountry"></div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h2>📊 World Facts</h2>
+
+        <p>
+          <span class="pill">195 Countries</span>
+          <span class="pill">7 Continents</span>
+          <span class="pill">1 Planet</span>
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <h2>🧭 Explore</h2>
+
+        <p>
+          Search for a country or press the random
+          button to discover somewhere new.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================= GAMES ================= -->
+
+  <section id="games" class="hidden">
+
+    <div class="grid">
+
+      <div class="card hero">
+
+        <h2>🎮 Games</h2>
+
+        <p>
+          Test your geography knowledge!
+        </p>
+
+        <div class="score">
+
+          Score:
+          <span id="score">0</span>
+
+          ·
+
+          Streak:
+          <span id="streak">0</span>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="card game"
+        onclick="startGame('flag')"
+      >
+
+        <div class="game-icon">
+          🏳️
+        </div>
+
+        <h2>Guess the Flag</h2>
+
+        <p>
+          Identify the country from its flag.
+        </p>
+
+      </div>
+
+
+      <div
+        class="card game"
+        onclick="startGame('capital')"
+      >
+
+        <div class="game-icon">
+          🏛️
+        </div>
+
+        <h2>Guess the Capital</h2>
+
+        <p>
+          Match a country with its capital.
+        </p>
+
+      </div>
+
+
+      <div
+        class="card game"
+        onclick="startGame('shape')"
+      >
+
+        <div class="game-icon">
+          🗺️
+        </div>
+
+        <h2>Guess the Country</h2>
+
+        <p>
+          Use clues to identify the country.
+        </p>
+
+      </div>
+
+
+      <div
+        class="card game"
+        onclick="startGame('mixed')"
+      >
+
+        <div class="game-icon">
+          🧠
+        </div>
+
+        <h2>Mixed Quiz</h2>
+
+        <p>
+          A little bit of everything.
+        </p>
+
+      </div>
+
+
+      <div
+        id="quiz"
+        class="card hero hidden"
+      ></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================= FUN FACT ================= -->
+
+  <section id="fun" class="hidden">
+
+    <div class="grid">
+
+      <div class="card hero">
+
+        <h2>💡 Fun Fact of the Day</h2>
+
+        <p>
+          Discover a random country and an
+          interesting fact about it.
+        </p>
+
+        <div id="funFact"></div>
+
+        <button
+          class="main-button"
+          onclick="newFact()"
+        >
+          🔄 New Random Country
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<!-- ================= BOTTOM NAVIGATION ================= -->
+
+<nav class="bottom-nav">
+
+  <div class="nav-inner">
+
+    <button
+      class="nav-button active"
+      onclick="showTab('home', this)"
+    >
+
+      <span>🏠</span>
+
+      Home
+
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showTab('games', this)"
+    >
+
+      <span>🎮</span>
+
+      Games
+
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showTab('fun', this)"
+    >
+
+      <span>💡</span>
+
+      Fun Fact
+
+    </button>
+
+  </div>
+
+</nav>
+
+
+<script>
+
+/* =========================================
+   COUNTRY DATA
+========================================= */
+
+const countries = [
+
+  {
+    name: "Algeria",
+    flag: "🇩🇿",
+    capital: "Algiers",
+    continent: "Africa",
+    currency: "Algerian dinar",
+    fact: "Algeria is the largest country in Africa by area."
+  },
+
+  {
+    name: "Luxembourg",
+    flag: "🇱🇺",
+    capital: "Luxembourg City",
+    continent: "Europe",
+    currency: "Euro",
+    fact: "Luxembourg is one of Europe's smallest countries."
+  },
+
+  {
+    name: "Canada",
+    flag: "🇨🇦",
+    capital: "Ottawa",
+    continent: "North America",
+    currency: "Canadian dollar",
+    fact: "Canada has the world's longest coastline."
+  },
+
+  {
+    name: "Japan",
+    flag: "🇯🇵",
+    capital: "Tokyo",
+    continent: "Asia",
+    currency: "Japanese yen",
+    fact: "Japan is made up of thousands of islands."
+  },
+
+  {
+    name: "Brazil",
+    flag: "🇧🇷",
+    capital: "Brasília",
+    continent: "South America",
+    currency: "Brazilian real",
+    fact: "Brazil is the largest country in South America."
+  },
+
+  {
+    name: "Egypt",
+    flag: "🇪🇬",
+    capital: "Cairo",
+    continent: "Africa",
+    currency: "Egyptian pound",
+    fact: "The Great Pyramid of Giza is one of the Seven Wonders of the Ancient World."
+  },
+
+  {
+    name: "France",
+    flag: "🇫🇷",
+    capital: "Paris",
+    continent: "Europe",
+    currency: "Euro",
+    fact: "France has territory in multiple parts of the world."
+  },
+
+  {
+    name: "Australia",
+    flag: "🇦🇺",
+    capital: "Canberra",
+    continent: "Oceania",
+    currency: "Australian dollar",
+    fact: "Australia is both a country and a continent."
+  },
+
+  {
+    name: "Türkiye",
+    flag: "🇹🇷",
+    capital: "Ankara",
+    continent: "Europe/Asia",
+    currency: "Turkish lira",
+    fact: "Türkiye lies across Europe and Asia."
+  },
+
+  {
+    name: "Morocco",
+    flag: "🇲🇦",
+    capital: "Rabat",
+    continent: "Africa",
+    currency: "Moroccan dirham",
+    fact: "Morocco is home to the Atlas Mountains."
+  },
+
+  {
+    name: "Italy",
+    flag: "🇮🇹",
+    capital: "Rome",
+    continent: "Europe",
+    currency: "Euro",
+    fact: "Rome contains Vatican City, a separate sovereign state."
+  },
+
+  {
+    name: "South Korea",
+    flag: "🇰🇷",
+    capital: "Seoul",
+    continent: "Asia",
+    currency: "South Korean won",
+    fact: "South Korea is known for its highly connected digital infrastructure."
+  }
+
+];
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+function showTab(tabName, button) {
+
+  document
+    .querySelectorAll("section")
+    .forEach(section => {
+      section.classList.add("hidden");
+    });
+
+  document
+    .getElementById(tabName)
+    .classList.remove("hidden");
+
+  document
+    .querySelectorAll(".nav-button")
+    .forEach(btn => {
+      btn.classList.remove("active");
+    });
+
+  button.classList.add("active");
+}
+
+
+/* =========================================
+   COUNTRY CARD
+========================================= */
+
+function countryCard(country) {
+
+  return `
+
+    <div class="flag">
+      ${country.flag}
+    </div>
+
+    <h2>
+      ${country.name}
+    </h2>
+
+    <div class="facts">
+
+      <div class="fact">
+        <b>Capital</b>
+        ${country.capital}
+      </div>
+
+      <div class="fact">
+        <b>Continent</b>
+        ${country.continent}
+      </div>
+
+      <div class="fact">
+        <b>Currency</b>
+        ${country.currency}
+      </div>
+
+      <div class="fact">
+        <b>Fun Fact</b>
+        ${country.fact}
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
+function searchCountry() {
+
+  const search =
+    document
+      .getElementById("search")
+      .value
+      .toLowerCase()
+      .trim();
+
+  const result =
+    document.getElementById("searchResult");
+
+  if (search === "") {
+
+    result.innerHTML = "";
+
+    return;
+
+  }
+
+  const country =
+    countries.find(
+      country =>
+        country.name
+          .toLowerCase()
+          .includes(search)
+    );
+
+  if (country) {
+
+    result.innerHTML =
+      countryCard(country);
+
+  } else {
+
+    result.innerHTML =
+      "<p>No country found yet.</p>";
+
+  }
+
+}
+
+
+/* =========================================
+   RANDOM COUNTRY
+========================================= */
+
+function randomCountry() {
+
+  const country =
+    countries[
+      Math.floor(
+        Math.random() * countries.length
+      )
+    ];
+
+  document
+    .getElementById("searchResult")
+    .innerHTML =
+      countryCard(country);
+
+}
+
+
+/* =========================================
+   FUN FACT
+========================================= */
+
+function newFact() {
+
+  const country =
+    countries[
+      Math.floor(
+        Math.random() * countries.length
+      )
+    ];
+
+  document
+    .getElementById("funFact")
+    .innerHTML =
+      countryCard(country);
+
+}
+
+
+/* =========================================
+   SCORE
+========================================= */
+
+let score = 0;
+
+let streak = 0;
+
+let correctAnswer = "";
+
+
+/* =========================================
+   START GAME
+========================================= */
+
+function startGame(type) {
+
+  const country =
+    countries[
+      Math.floor(
+        Math.random() * countries.length
+      )
+    ];
+
+
+  let options = [
+
+    country,
+
+    ...countries
+      .filter(c => c.name !== country.name)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+
+  ];
+
+
+  options =
+    options.sort(
+      () => Math.random() - 0.5
+    );
+
+
+  correctAnswer = country.name;
+
+
+  let question = "";
+
+
+  if (type === "flag") {
+
+    question = `
+
+      <div style="font-size:85px">
+        ${country.flag}
+      </div>
+
+      <div class="question">
+        Which country has this flag?
+      </div>
+
+    `;
+
+  }
+
+
+  else if (type === "capital") {
+
+    question = `
+
+      <div class="question">
+
+        What is the capital of
+        <b>${country.name}</b>?
+
+      </div>
+
+    `;
+
+  }
+
+
+  else if (type === "shape") {
+
+    question = `
+
+      <div style="font-size:70px">
+        🗺️
+      </div>
+
+      <div class="question">
+
+        This country is in
+        <b>${country.continent}</b>.
+
+        Its capital is
+        <b>${country.capital}</b>.
+
+        <br><br>
+
+        Which country is it?
+
+      </div>
+
+    `;
+
+  }
+
+
+  else {
+
+    question = `
+
+      <div class="question">
+
+        ${country.flag}
+
+        Which country has the capital
+        <b>${country.capital}</b>?
+
+      </div>
+
+    `;
+
+  }
+
+
+  const quiz =
+    document.getElementById("quiz");
+
+
+  quiz.classList.remove("hidden");
+
+
+  quiz.innerHTML = `
+
+    ${question}
+
+    <div class="answers">
+
+      ${
+
+        options
+          .map(
+
+            option => `
+
+              <button
+                class="answer"
+                onclick="answerQuestion('${option.name}')"
+              >
+
+                ${option.name}
+
+              </button>
+
+            `
+
+          )
+          .join("")
+
+      }
+
+    </div>
+
+    <div
+      id="feedback"
+      class="feedback"
+    ></div>
+
+  `;
+
+
+  quiz.scrollIntoView({
+    behavior: "smooth"
+  });
+
+}
+
+
+/* =========================================
+   ANSWER QUESTION
+========================================= */
+
+function answerQuestion(answer) {
+
+  const feedback =
+    document.getElementById("feedback");
+
+
+  if (answer === correctAnswer) {
+
+    score++;
+
+    streak++;
+
+
+    feedback.innerHTML =
+      "✅ Correct! Great job.";
+
+  }
+
+  else {
+
+    streak = 0;
+
+
+    feedback.innerHTML =
+      `❌ Not quite. The answer was
+       <b>${correctAnswer}</b>.`;
+
+  }
+
+
+  document.getElementById("score")
+    .textContent = score;
+
+
+  document.getElementById("streak")
+    .textContent = streak;
+
+}
+
+
+/* =========================================
+   STARTUP
+========================================= */
+
+const today =
+  countries[
+    new Date().getDate() %
+    countries.length
+  ];
+
+
+document.getElementById("dailyCountry")
+  .innerHTML =
+    countryCard(today);
+
+
+newFact();
+
+</script>
+
+</body>
+</html>
